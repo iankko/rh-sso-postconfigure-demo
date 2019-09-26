@@ -1,0 +1,15 @@
+## admin cli commands to edit the configuration
+embed-server --std-out=echo  --server-config=standalone-openshift.xml
+batch
+/system-property=com.sun.jndi.ldap.object.disableEndpointIdentification:add(value=true)
+/system-property=http.proxyPort:add(value=3128) 
+/system-property=http.proxyHost:add(value=example.com.local) 
+/system-property=https.proxyPort:add(value=3128) 
+/system-property=https.proxyHost:add(value=example.com.local) 
+/subsystem=keycloak-server/spi=connectionsHttpClient/provider=default/:map-put(name=properties,key=connection-pool-size, value="512")
+/subsystem=keycloak-server/spi=connectionsHttpClient/provider=default/:map-put(name=properties,key=max-pooled-per-route, value="128")
+/subsystem=keycloak-server/spi=connectionsHttpClient/provider=default:write-attribute(name=properties.proxy-mappings,value=["example.com;NO_PROXY",".*\\.local;NO_PROXY",".*;http://example.com.local:3128"])
+
+run-batch
+quit
+
